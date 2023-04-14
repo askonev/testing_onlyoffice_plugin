@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'json'
 gem 'onlyoffice_logger_helper'
+gem 'rake'
 gem 'rspec'
 
 group :development do
