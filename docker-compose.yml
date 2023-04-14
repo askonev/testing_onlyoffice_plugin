@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  documentserver:
+    image: onlyoffice/4testing-documentserver-ee:${DOCSERVER_VERSION}
+    ports:
+      - "8080:80"
+    depends_on:
+      - nginx
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8081:80"
+    volumes:
+      - ./assets:/usr/share/nginx/html/
