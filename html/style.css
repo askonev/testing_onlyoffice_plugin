@@ -1,0 +1,20 @@
+
+body {
+    height: 100%;
+    margin: 0;
+}
+
+button.mtd {
+    height: 5%;
+    width: auto;
+}
+
+ul.hr li {
+    display: inline;
+    margin-right: 5px;
+    padding: 3px;
+}
+
+#placeholder {
+    height: 500px;
+}

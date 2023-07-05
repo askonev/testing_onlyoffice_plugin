@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <title>DocsAPI</title>
+    <script type="text/javascript" src="http://192.168.4.41:80/web-apps/apps/api/documents/api.js"></script>
+    <script type="text/javascript" src="code.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<ul class="hr">
+    <li>
+        <button class="mtd" onclick="getAllComments();">
+            getAllComments
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="addHello();">
+            comment_text
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="addBlockLvlSdt();">
+            blockLvlSdt
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="addInlineLvlSdt();">
+            inlineLvlSdt
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="attachOnChangeContentControl();">
+            onChangeCC
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="getAllContentControls();">
+            getAllContentControls
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="insertAndReplaceProps();">
+            replaceProps
+        </button>
+    </li>
+    <li>
+        <button class="mtd" onclick="getReviewReport();">
+            getReviewReport
+        </button>
+    </li>
+</ul>
+
+
+<!-- <button onclick="TrackRevisionON();" style="height:50px; width:100px;">TrackRevisionON</button>
+  <button onclick="TrackRevisionOFF();" style="height:50px; width:100px;">TrackRevisionOFF</button> -->
+
+<div id="placeholder"></div>
+
+<script>
+    // let uniqueId = '123123123'
+    let uniqueId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+
+    const ip = "192.168.4.41";
+    const nginx_port = "3000"
+    const file = "new.docx";
+
+    const url = `http://${ip}:${nginx_port}/files/${file}`;
+    // let url = 'https://testing-documentserver-files.s3.amazonaws.com/public_documents/empty.docx'
+    // console.log(url);
+
+    const _type = "desktop";
+    const _height = "100%";
+    const _width = "100%";
+
+    function createConnector() {
+        window.connector = docEditor.createConnector();
+    }
+
+    window.docEditor = new DocsAPI.DocEditor("placeholder", {
+        type: _type,
+        document: {
+            fileType: "docx",
+            info: {
+                owner: "John Smith",
+                favorite: false,
+                folder: "Example Files",
+                sharingSettings: [
+                    {
+                        permissions: "Full Access",
+                        user: "John Smith",
+                    },
+                    {
+                        isLink: true,
+                        permissions: "Read Only",
+                        user: "External link",
+                    },
+                ],
+            },
+            key: uniqueId.toString(),
+            title: "empty.docx",
+            url: url,
+        },
+        documentType: "word",
+        editorConfig: {
+            customization: {
+                zoom: 120,
+                integrationMode: "embed",
+            },
+            // "callbackUrl": "http://192.168.229.28:83/editors/callback",
+        },
+        height: _height,
+        width: _width,
+        events: {
+            onDocumentReady: createConnector,
+        },
+    });
+</script>
+</body>
+
+</html>
