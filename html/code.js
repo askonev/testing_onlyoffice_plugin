@@ -17,21 +17,19 @@
 function getReviewReport() {
     connector.callCommand(function () {
         let odoc = Api.GetDocument();
-            odoc.SetTrackRevisions(true);
+        odoc.SetTrackRevisions(true);
+        let opar1 = odoc.GetElement(0);
+        opar1.AddText("Reviewing documents");
+        opar1.SetJc("center");
+        opar1.SetFontSize(24);
+        opar1.SetBold(true);
+        let opar2 = Api.CreateParagraph();
+        opar2.AddText("If you need to get review report, you can use Document Builder. The steps below will show how to do it.");
+        odoc.Push(opar2);
         let report = odoc.GetReviewReport();
-        let opar = Api.CreateParagraph();
-        if (typeof report["Anonymous"] === "object") {
-            for (let i = 0; i < report["Anonymous"].length; i++) {
-                let change_info = report["Anonymous"][i];
-                console.log(change_info);
-            }
-            opar.AddText("Anonymous: " + report["Anonymous"][0]);
-            odoc.Push(opar);
-            // console.log("Anonymous: " + report["Anonymous"]);
-        } else {
-            console.log("there are no changes");
-        }
         odoc.SetTrackRevisions(false);
+        console.log(report)
+        console.log(typeof report["Anonymous"] === "object")
     });
 }
 
@@ -124,4 +122,12 @@ function getAllContentControls() {
             console.log('content controls not found')
         }
     });
+}
+
+function removeAllElements() {
+    connector.callCommand(() => {
+            let odoc = Api.GetDocument();
+            odoc.RemoveAllElements();
+        }
+    )
 }
