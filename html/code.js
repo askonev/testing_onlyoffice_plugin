@@ -94,12 +94,12 @@ function addBlockLvlSdt() {
     let config = {
         type: 1, //  1 (block), 2 (inline)
         property: {
-            Appearance: 1, Id: 123, Lock: 3, Tag: "{TAG}", PlaceHolderText: "BlockLvlSdt",
+            Appearance: 1, Id: 123, Lock: 3, Tag: "container", PlaceHolderText: "BlockLvlSdt",
         },
     };
 
     connector.executeMethod("AddContentControl", [config.type, config.property], (callback_arg) => {
-        // console.log(callback_arg);
+        console.log(callback_arg);
     });
 }
 
