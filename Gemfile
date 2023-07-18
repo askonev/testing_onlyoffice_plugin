@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'json'
 gem 'onlyoffice_logger_helper'
+gem 'onlyoffice_webdriver_wrapper'
 gem 'rake'
 gem 'rspec'
 
