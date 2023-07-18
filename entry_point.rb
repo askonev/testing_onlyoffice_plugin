@@ -1,6 +1,30 @@
 # frozen_string_literal: true
 
 require_relative 'lib/manager'
+require 'onlyoffice_webdriver_wrapper'
+
+@webdriver = OnlyofficeWebdriverWrapper::WebDriver.new(:chrome, { record_video: false })
+
+ip = `docker-compose exec nginx hostname -i`.chomp
+
+iframe = '/html/body/iframe'
+button = '/html/body/ul/li[3]/button'
+b_file = '//*[@id="toolbar"]/div/div[1]/section/ul/li[1]/a'
+b_docx = '//*[@id="panel-saveas"]/div[1]/div[2]/div[1]/div/div'
+
+@webdriver.open(ip.to_s)
+OnlyofficeLoggerHelper.green_log('iframe exist') if @webdriver.element_visible?('/html/body/iframe')
+
+@webdriver.wait_until_element_visible(iframe)
+@webdriver.get_element(button).click
+@webdriver.select_frame(iframe)
+@webdriver.get_element(b_file).click if @webdriver.element_visible?(b_file)
+@webdriver.get_element(b_docx).click
+@webdriver.wait_file_for_download('empty.docx')
+
+p 'p'
+
+###########
 
 def docker_compose_ps
   JSON.parse(`docker-compose ps --format=json`)
@@ -65,8 +89,8 @@ def docker_compose_cp(direction, service, src_path, dest_path)
   end
 end
 
-docker_compose_cp('from', StaticData::SERVER_NAME, "#{StaticData::EXAMPLES_PATH}/local.json", './tmp')
-write_json
-docker_compose_cp('to', StaticData::SERVER_NAME, './tmp/local.json', StaticData::EXAMPLES_PATH)
-
-system("docker compose exec -T #{StaticData::SERVER_NAME} supervisorctl restart ds:example")
+# docker_compose_cp('from', StaticData::SERVER_NAME, "#{StaticData::EXAMPLES_PATH}/local.json", './tmp')
+# write_json
+# docker_compose_cp('to', StaticData::SERVER_NAME, './tmp/local.json', StaticData::EXAMPLES_PATH)
+#
+# system("docker compose exec -T #{StaticData::SERVER_NAME} supervisorctl restart ds:example")
