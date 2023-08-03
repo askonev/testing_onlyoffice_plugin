@@ -18,10 +18,10 @@ function returnText() {
     connector.callCommand(function () {
         let odoc = Api.GetDocument();
         let opar = odoc.GetElement(0);
-        // opar.AddText('test');
+        opar.AddText('test');
         console.log('source: ', opar.GetText())
         return opar.GetText();
-    }, false, true, function (retValue) {
+    }, false, false, function (retValue) {
         console.log(retValue);
     })
 }

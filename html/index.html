@@ -3,7 +3,7 @@
 
 <head>
     <title>DocsAPI</title>
-    <script type="text/javascript" src="http://192.168.255.26:80/web-apps/apps/api/documents/api.js"></script>
+    <script type="text/javascript" src="http://192.168.0.153:80/web-apps/apps/api/documents/api.js"></script>
     <script type="text/javascript" src="code.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -62,23 +62,19 @@
     </li>
 </ul>
 
-
-<!-- <button onclick="TrackRevisionON();" style="height:50px; width:100px;">TrackRevisionON</button>
-  <button onclick="TrackRevisionOFF();" style="height:50px; width:100px;">TrackRevisionOFF</button> -->
-
 <div id="placeholder"></div>
 
 <script>
-    // let uniqueId = '123123123'
-    let uniqueId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+    const uniqueId = '000000001'
+    const date = new Date();
+    // const uniqueId = _generateRandomId(36)
 
-    const ip = "192.168.255.26";
+    const ip = "192.168.0.153";
     const nginx_port = "3000"
     const file = "new.docx";
 
     const url = `http://${ip}:${nginx_port}/files/${file}`;
     // let url = 'https://testing-documentserver-files.s3.amazonaws.com/public_documents/empty.docx'
-    // console.log(url);
 
     const _type = "desktop";
     const _height = "100%";
@@ -88,14 +84,37 @@
         window.connector = docEditor.createConnector();
     }
 
+    let onCollaborativeChanges = function (event) {
+        console.log("The document changed by collaborative user");
+
+        connector.callCommand(function () {
+            console.log('callCommand');
+            let odoc = Api.GetDocument();
+            var opar = odoc.GetElement(0);
+            odoc.SetTrackRevisions(true);
+            opar.AddText("Reviewing documents");
+            let oReviewReport = odoc.GetReviewReport();
+            odoc.SetTrackRevisions(false);
+
+            for (let UserName in oReviewReport) {
+                console.log(UserName)
+            }
+        }, false, false)
+    };
+
+    let onMetaChange = function (event) {
+        console.log(event, 'onMetaChange')
+    };
+
     window.docEditor = new DocsAPI.DocEditor("placeholder", {
         type: _type,
         document: {
             fileType: "docx",
             info: {
-                owner: "John Smith",
                 favorite: false,
-                folder: "Example Files",
+                folder: "root",
+                owner: "Owner",
+                uploaded: date.toISOString(),
                 sharingSettings: [
                     {
                         permissions: "Full Access",
@@ -104,28 +123,53 @@
                     {
                         isLink: true,
                         permissions: "Read Only",
-                        user: "External link",
+                        user: "anon",
                     },
                 ],
             },
-            key: uniqueId.toString(),
+            key: uniqueId,
             title: "empty.docx",
             url: url,
+            permissions: {
+                "userInfoGroups": ["Group1", ""],
+            },
         },
         documentType: "word",
         editorConfig: {
             customization: {
-                zoom: 120,
+                zoom: 100,
                 integrationMode: "embed",
             },
+            coEditing: {
+                mode: "strict",
+                change: true,
+            },
+            user: {
+                group: "Group1",
+                id: _generateRandomId(8),
+                name: "John Smith"
+            }
             // "callbackUrl": "http://192.168.229.28:83/editors/callback",
         },
         height: _height,
         width: _width,
         events: {
-            onDocumentReady: createConnector,
+            "onDocumentReady": createConnector,
+            "onCollaborativeChanges": onCollaborativeChanges,
+            "onMetaChange": onMetaChange,
         },
     });
+
+    function _generateRandomId(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let id = '';
+        const charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charactersLength);
+            id += characters.charAt(randomIndex);
+        }
+        return id;
+    }
 </script>
 </body>
 
